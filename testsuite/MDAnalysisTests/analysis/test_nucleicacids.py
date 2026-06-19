@@ -56,9 +56,7 @@ def test_empty_ag_error(strand):
     strand2 = ResidueGroup([strand.residues[1]])
 
     with pytest.raises(ValueError, match="returns an empty AtomGroup"):
-        NucPairDist.select_strand_atoms(
-            strand1, strand2, "UNK1", "O2", g_name="GUA"
-        )
+        NucPairDist.select_strand_atoms(strand1, strand2, "UNK1", "O2", g_name="GUA")
 
 
 @pytest.fixture(scope="module")

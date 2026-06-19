@@ -467,12 +467,8 @@ def test_basic_read_tpr(
     assert_allclose(u.atoms.positions[0, ...], np.asarray(exp_first_atom) * 10)
     assert_allclose(u.atoms.positions[-1, ...], np.asarray(exp_last_atom) * 10)
     assert_equal(u.atoms.positions.shape, exp_shape)
-    assert_allclose(
-        u.atoms.velocities[0, ...], np.asarray(exp_vel_first_atom) * 10
-    )
-    assert_allclose(
-        u.atoms.velocities[-1, ...], np.asarray(exp_vel_last_atom) * 10
-    )
+    assert_allclose(u.atoms.velocities[0, ...], np.asarray(exp_vel_first_atom) * 10)
+    assert_allclose(u.atoms.velocities[-1, ...], np.asarray(exp_vel_last_atom) * 10)
     assert_equal(u.atoms.velocities.shape, exp_shape)
 
 
@@ -514,9 +510,7 @@ def test_unit_swapping(convert_units):
     expected_first_pos = np.asarray([3.19900e00, 1.62970e00, 1.54480e00])
     expected_last_pos = np.asarray([3.39350e00, 3.49420e00, 3.02400e00])
     expected_first_vel = np.asarray([-0.20668714, 0.26678202, -0.10564042])
-    expected_last_vel = np.asarray(
-        [-3.38010e-02, -3.22064e-01, -1.9863836e-01]
-    )
+    expected_last_vel = np.asarray([-3.38010e-02, -3.22064e-01, -1.9863836e-01])
     if convert_units:
         # convert_units=True is the MDA default for readers, so we
         # expect the nm to get converted to A

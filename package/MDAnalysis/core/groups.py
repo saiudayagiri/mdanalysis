@@ -161,9 +161,7 @@ def make_classes():
     for cls in groups:
         bases[cls] = GBase._subclass(is_group=True)
     # CBase for patching all components
-    CBase = bases[ComponentBase] = _TopologyAttrContainer._subclass(
-        is_group=False
-    )
+    CBase = bases[ComponentBase] = _TopologyAttrContainer._subclass(is_group=False)
     for cls in components:
         bases[cls] = CBase._subclass(is_group=False)
 
@@ -421,14 +419,9 @@ class _MutableBase(object):
                 )
             # missing required topologyattr
             else:
-                err = (
-                    "{selfcls}.{attrname} not available; "
-                    "this requires {topattr}"
-                )
+                err = "{selfcls}.{attrname} not available; " "this requires {topattr}"
                 raise NoDataError(
-                    err.format(
-                        selfcls=selfcls, attrname=attrname, topattr=topattr
-                    )
+                    err.format(selfcls=selfcls, attrname=attrname, topattr=topattr)
                 )
 
         else:
@@ -535,9 +528,7 @@ def _only_same_level(function):
                 "".format(function.__name__)
             )
         if self.universe is not other.universe:
-            raise ValueError(
-                "Can't operate on objects from different Universes"
-            )
+            raise ValueError("Can't operate on objects from different Universes")
         return function(self, other)
 
     return wrapped
@@ -674,10 +665,7 @@ class GroupBase(_MutableBase):
         if attr in _TOPOLOGY_ATTRS:
             cls = _TOPOLOGY_ATTRS[attr]
             if attr == cls.singular and attr != cls.attrname:
-                err = (
-                    "{selfcls} has no attribute {attr}. "
-                    "Do you mean {plural}?"
-                )
+                err = "{selfcls} has no attribute {attr}. " "Do you mean {plural}?"
                 raise AttributeError(
                     err.format(selfcls=selfcls, attr=attr, plural=cls.attrname)
                 )
@@ -741,9 +729,7 @@ class GroupBase(_MutableBase):
         else:
             raise TypeError(
                 "unsupported operand type(s) for +:"
-                " '{}' and '{}'".format(
-                    type(self).__name__, type(other).__name__
-                )
+                " '{}' and '{}'".format(type(self).__name__, type(other).__name__)
             )
 
     def __sub__(self, other):
@@ -896,9 +882,7 @@ class GroupBase(_MutableBase):
 
         if sorted:
             if set_mask:
-                unique_ix, restore_mask = np.unique(
-                    self.ix, return_inverse=True
-                )
+                unique_ix, restore_mask = np.unique(self.ix, return_inverse=True)
                 self._unique_restore_mask = restore_mask
             else:
                 unique_ix = unique_int_1d(self.ix)
@@ -1171,9 +1155,7 @@ class GroupBase(_MutableBase):
             if wrap:
                 coords = atoms.pack_into_box(inplace=False)
             elif unwrap:
-                coords = atoms.unwrap(
-                    compound=comp, reference=None, inplace=False
-                )
+                coords = atoms.unwrap(compound=comp, reference=None, inplace=False)
             else:
                 coords = atoms.positions
             # If there's no atom, return its (empty) coordinates unchanged.
@@ -1185,16 +1167,14 @@ class GroupBase(_MutableBase):
                 return coords.mean(axis=0)
             # promote weights to dtype if required:
             weights = weights.astype(dtype, copy=False)
-            return (
-                np.einsum("ij,ij->j", coords, weights[:, None]) / weights.sum()
-            )
+            return np.einsum("ij,ij->j", coords, weights[:, None]) / weights.sum()
 
         # When compound split caching gets implemented it will be clever to
         # preempt at this point whether or not stable sorting will be needed
         # later for unwrap (so that we don't split now with non-stable sort,
         # only to have to re-split with stable sort if unwrap is requested).
-        (atom_masks, compound_masks, n_compounds) = (
-            self._split_by_compound_indices(comp)
+        (atom_masks, compound_masks, n_compounds) = self._split_by_compound_indices(
+            comp
         )
 
         # Unwrap Atoms
@@ -1216,9 +1196,7 @@ class GroupBase(_MutableBase):
                 _centers = _coords.mean(axis=1)
             else:
                 _weights = weights[atom_mask]
-                _centers = np.einsum(
-                    "ijk,ijk->ik", _coords, _weights[:, :, None]
-                )
+                _centers = np.einsum("ijk,ijk->ik", _coords, _weights[:, :, None])
                 _centers /= _weights.sum(axis=1)[:, None]
             centers[compound_mask] = _centers
         if wrap:
@@ -1404,8 +1382,8 @@ class GroupBase(_MutableBase):
         if comp == "group":
             return function(attribute_values, axis=0)
 
-        (atom_masks, compound_masks, n_compounds) = (
-            self._split_by_compound_indices(comp)
+        (atom_masks, compound_masks, n_compounds) = self._split_by_compound_indices(
+            comp
         )
 
         higher_dims = list(attribute_values.shape[1:])
@@ -1899,9 +1877,7 @@ class GroupBase(_MutableBase):
 
                 # Build mapping from compound index to shift index
                 unique_compound_indices = unique_int_1d(compound_indices)
-                index_to_shift = np.empty(
-                    compound_indices.max() + 1, dtype=int
-                )
+                index_to_shift = np.empty(compound_indices.max() + 1, dtype=int)
                 index_to_shift[unique_compound_indices] = np.arange(
                     len(unique_compound_indices)
                 )
@@ -2012,8 +1988,7 @@ class GroupBase(_MutableBase):
         # ResidueGroups or SegmentGroups
         if reference == "com" and not hasattr(unique_atoms, "masses"):
             raise NoDataError(
-                "Cannot perform unwrap with reference='com', "
-                "this requires masses."
+                "Cannot perform unwrap with reference='com', " "this requires masses."
             )
 
         # Sanity checking of the compound parameter is done downstream in
@@ -2081,9 +2056,7 @@ class GroupBase(_MutableBase):
                         refpos = positions[atom_mask].mean(axis=1)
                     refpos = refpos.astype(np.float32, copy=False)
                     target = distances.apply_PBC(refpos, self.dimensions)
-                    positions[atom_mask] += (
-                        target[:, None, :] - refpos[:, None, :]
-                    )
+                    positions[atom_mask] += target[:, None, :] - refpos[:, None, :]
         if inplace:
             unique_atoms.positions = positions
         if not atoms.isunique:
@@ -2243,9 +2216,7 @@ class GroupBase(_MutableBase):
         .. versionadded:: 0.16.0
         """
         o_ix = other.ix_array
-        return self._derived_class(
-            np.concatenate([self.ix, o_ix]), self.universe
-        )
+        return self._derived_class(np.concatenate([self.ix, o_ix]), self.universe)
 
     @_only_same_level
     def union(self, other):
@@ -2332,9 +2303,7 @@ class GroupBase(_MutableBase):
         .. versionadded:: 0.16
         """
         o_ix = other.ix_array
-        return self._derived_class(
-            np.intersect1d(self.ix, o_ix), self.universe
-        )
+        return self._derived_class(np.intersect1d(self.ix, o_ix), self.universe)
 
     @_only_same_level
     def subtract(self, other):
@@ -2838,9 +2807,7 @@ class AtomGroup(GroupBase):
                 errmsg = (
                     "Can only set AtomGroup residues to Residue "
                     "or ResidueGroup not {}".format(
-                        ", ".join(
-                            type(r) for r in new if not isinstance(r, Residue)
-                        )
+                        ", ".join(type(r) for r in new if not isinstance(r, Residue))
                     )
                 )
                 raise TypeError(errmsg) from None
@@ -2882,8 +2849,7 @@ class AtomGroup(GroupBase):
     @segments.setter
     def segments(self, new):
         raise NotImplementedError(
-            "Cannot assign Segments to AtomGroup. "
-            "Segments are assigned to Residues"
+            "Cannot assign Segments to AtomGroup. " "Segments are assigned to Residues"
         )
 
     @property
@@ -3012,9 +2978,7 @@ class AtomGroup(GroupBase):
 
         .. versionadded:: 2.0.0
         """
-        return self._asunique(
-            sorted=sorted, group=self.universe.atoms, set_mask=True
-        )
+        return self._asunique(sorted=sorted, group=self.universe.atoms, set_mask=True)
 
     @property
     def positions(self):
@@ -3618,10 +3582,7 @@ class AtomGroup(GroupBase):
             )
             raise ValueError(errmsg) from None
 
-        return [
-            self[levelindices == index]
-            for index in unique_int_1d(levelindices)
-        ]
+        return [self[levelindices == index] for index in unique_int_1d(levelindices)]
 
     def guess_bonds(self, vdwradii=None, fudge_factor=0.55, lower_bound=0.1):
         """Guess bonds, angles, and dihedrals between the atoms in this
@@ -3702,9 +3663,7 @@ class AtomGroup(GroupBase):
         .. versionadded:: 0.11.0
         """
         if len(self) != 2:
-            raise ValueError(
-                "bond only makes sense for a group with exactly 2 atoms"
-            )
+            raise ValueError("bond only makes sense for a group with exactly 2 atoms")
         return topologyobjects.Bond(self.ix, self.universe)
 
     @property
@@ -3721,9 +3680,7 @@ class AtomGroup(GroupBase):
         .. versionadded:: 0.11.0
         """
         if len(self) != 3:
-            raise ValueError(
-                "angle only makes sense for a group with exactly 3 atoms"
-            )
+            raise ValueError("angle only makes sense for a group with exactly 3 atoms")
         return topologyobjects.Angle(self.ix, self.universe)
 
     @property
@@ -3797,9 +3754,7 @@ class AtomGroup(GroupBase):
         .. versionadded:: 1.0.0
         """
         if len(self) != 5:
-            raise ValueError(
-                "cmap only makes sense for a group with exactly 5 atoms"
-            )
+            raise ValueError("cmap only makes sense for a group with exactly 5 atoms")
         return topologyobjects.CMap(self.ix, self.universe)
 
     convert_to = Accessor("convert_to", ConverterWrapper)
@@ -3920,9 +3875,7 @@ class AtomGroup(GroupBase):
         # Try and select a Class using get_ methods (becomes `writer`)
         # Once (and if!) class is selected, use it in with block
         try:
-            writer = get_writer_for(
-                filename, format=file_format, multiframe=multiframe
-            )
+            writer = get_writer_for(filename, format=file_format, multiframe=multiframe)
         except (ValueError, TypeError):
             pass
         else:
@@ -4135,9 +4088,7 @@ class ResidueGroup(GroupBase):
                 errmsg = (
                     "Can only set ResidueGroup segments to Segment "
                     "or SegmentGroup, not {}".format(
-                        ", ".join(
-                            type(r) for r in new if not isinstance(r, Segment)
-                        )
+                        ", ".join(type(r) for r in new if not isinstance(r, Segment))
                     )
                 )
                 raise TypeError(errmsg) from None
@@ -4456,9 +4407,7 @@ class ComponentBase(_MutableBase):
     def __init__(self, ix, u):
         # index of component
         if not isinstance(ix, numbers.Integral):
-            raise IndexError(
-                "Component can only be indexed by a single integer"
-            )
+            raise IndexError("Component can only be indexed by a single integer")
 
         self._ix = ix
         self._u = u
@@ -4468,14 +4417,9 @@ class ComponentBase(_MutableBase):
         if attr in _TOPOLOGY_ATTRS:
             cls = _TOPOLOGY_ATTRS[attr]
             if attr == cls.attrname and attr != cls.singular:
-                err = (
-                    "{selfcls} has no attribute {attr}. "
-                    "Do you mean {singular}?"
-                )
+                err = "{selfcls} has no attribute {attr}. " "Do you mean {singular}?"
                 raise AttributeError(
-                    err.format(
-                        selfcls=selfcls, attr=attr, singular=cls.singular
-                    )
+                    err.format(selfcls=selfcls, attr=attr, singular=cls.singular)
                 )
             else:
                 err = "This Universe does not contain {singular} information"
@@ -4516,9 +4460,7 @@ class ComponentBase(_MutableBase):
         """
         o_ix = other.ix_array
 
-        return self.level.plural(
-            np.concatenate([self.ix_array, o_ix]), self.universe
-        )
+        return self.level.plural(np.concatenate([self.ix_array, o_ix]), self.universe)
 
     def __radd__(self, other):
         """Using built-in sum requires supporting 0 + self. If other is
@@ -4539,9 +4481,7 @@ class ComponentBase(_MutableBase):
         else:
             raise TypeError(
                 "unsupported operand type(s) for +:"
-                " '{}' and '{}'".format(
-                    type(self).__name__, type(other).__name__
-                )
+                " '{}' and '{}'".format(type(self).__name__, type(other).__name__)
             )
 
     @property
@@ -4618,8 +4558,7 @@ class Atom(ComponentBase):
     def residue(self, new):
         if not isinstance(new, Residue):
             raise TypeError(
-                "Can only set Atom residue to Residue, not {}"
-                "".format(type(new))
+                "Can only set Atom residue to Residue, not {}" "".format(type(new))
             )
         self.universe._topology.tt.move_atom(self.ix, new.resindex)
 
@@ -4750,8 +4689,7 @@ class Residue(ComponentBase):
     def segment(self, new):
         if not isinstance(new, Segment):
             raise TypeError(
-                "Can only set Residue segment to Segment, not {}"
-                "".format(type(new))
+                "Can only set Residue segment to Segment, not {}" "".format(type(new))
             )
         self.universe._topology.tt.move_residue(self.ix, new.segindex)
 
@@ -4800,9 +4738,7 @@ class Segment(ComponentBase):
         """A :class:`ResidueGroup` of :class:`Residues<Residue>` present in this
         :class:`Segment`.
         """
-        rg = self.universe.residues[
-            self.universe._topology.resindices[self][0]
-        ]
+        rg = self.universe.residues[self.universe._topology.resindices[self][0]]
         rg._cache["isunique"] = True
         rg._cache["issorted"] = True
         rg._cache["sorted_unique"] = rg

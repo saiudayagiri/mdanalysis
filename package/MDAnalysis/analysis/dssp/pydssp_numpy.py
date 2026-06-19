@@ -68,10 +68,7 @@ def _upsample(a: np.ndarray, window: int) -> np.ndarray:
 
 def _unfold(a: np.ndarray, window: int, axis: int):
     "Helper function for 2D array upsampling"
-    idx = (
-        np.arange(window)[:, None]
-        + np.arange(a.shape[axis] - window + 1)[None, :]
-    )
+    idx = np.arange(window)[:, None] + np.arange(a.shape[axis] - window + 1)[None, :]
     unfolded = np.take(a, idx, axis=axis)
     return np.moveaxis(unfolded, axis - 1, -1)
 
@@ -191,9 +188,7 @@ def get_hbond_map(
         h_1 = coord[1:, 4]
         coord = coord[:, :4]
     else:  # pragma: no cover
-        raise ValueError(
-            "Number of atoms should be 4 (N,CA,C,O) or 5 (N,CA,C,O,H)"
-        )
+        raise ValueError("Number of atoms should be 4 (N,CA,C,O) or 5 (N,CA,C,O,H)")
     # after this:
     # h.shape == (n_residues, 3)
     # coord.shape == (n_residues, 4, 3)
@@ -228,23 +223,15 @@ def get_hbond_map(
     o_indices = pairs[:, 1]
     n_indices = pairs[:, 0]
 
-    d_ch = calc_bonds(
-        c_atoms[o_indices], h_1[n_indices], box=box, backend=backend
-    )
-    d_oh = calc_bonds(
-        o_atoms[o_indices], h_1[n_indices], box=box, backend=backend
-    )
-    d_cn = calc_bonds(
-        c_atoms[o_indices], n_atoms[n_indices], box=box, backend=backend
-    )
+    d_ch = calc_bonds(c_atoms[o_indices], h_1[n_indices], box=box, backend=backend)
+    d_oh = calc_bonds(o_atoms[o_indices], h_1[n_indices], box=box, backend=backend)
+    d_cn = calc_bonds(c_atoms[o_indices], n_atoms[n_indices], box=box, backend=backend)
 
     # electrostatic interaction energy
     # e[i, j] = e(CO_i) - e(NH_j)
     e = np.zeros((n_residues, n_residues))
     e[n_indices + 1, o_indices] = (
-        CONST_Q1Q2
-        * (1.0 / d_on + 1.0 / d_ch - 1.0 / d_oh - 1.0 / d_cn)
-        * CONST_F
+        CONST_Q1Q2 * (1.0 / d_on + 1.0 / d_ch - 1.0 / d_oh - 1.0 / d_cn) * CONST_F
     )
 
     if return_e:  # pragma: no cover
@@ -310,9 +297,7 @@ def assign(
 
     """
     # get hydrogen bond map
-    hbmap = get_hbond_map(
-        coord, donor_mask=donor_mask, box=box, backend=backend
-    )
+    hbmap = get_hbond_map(coord, donor_mask=donor_mask, box=box, backend=backend)
     hbmap = np.swapaxes(hbmap, -1, -2)  # convert into "i:C=O, j:N-H" form
 
     # identify turn 3, 4, 5

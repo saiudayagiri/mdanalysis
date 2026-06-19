@@ -43,9 +43,7 @@ def test_gnm(universe, tmpdir, client_GNMAnalysis):
     gnm.run(**client_GNMAnalysis)
     result = gnm.results
     assert len(result.times) == 10
-    assert_allclose(
-        gnm.results.times, np.arange(0, 1000, 100), atol=1e-3, rtol=0
-    )
+    assert_allclose(gnm.results.times, np.arange(0, 1000, 100), atol=1e-3, rtol=0)
     assert_allclose(
         gnm.results.eigenvalues,
         [
@@ -70,9 +68,7 @@ def test_gnm_run_step(universe, client_GNMAnalysis):
     gnm.run(step=3, **client_GNMAnalysis)
     result = gnm.results
     assert len(result.times) == 4
-    assert_allclose(
-        gnm.results.times, np.arange(0, 1200, 300), atol=1e-3, rtol=0
-    )
+    assert_allclose(gnm.results.times, np.arange(0, 1200, 300), atol=1e-3, rtol=0)
     assert_allclose(
         gnm.results.eigenvalues,
         [2.0287113e-15, 4.3810359e-15, 2.5501084e-15, 3.9839431e-15],
@@ -120,9 +116,7 @@ def test_closeContactGNMAnalysis(universe, client_GNMAnalysis):
     result = gnm.results
     assert len(result.times) == 2
     assert_allclose(gnm.results.times, (0, 100), atol=1e-3, rtol=0)
-    assert_allclose(
-        gnm.results.eigenvalues, [0.1502614, 0.1426407], atol=1e-3, rtol=0
-    )
+    assert_allclose(gnm.results.eigenvalues, [0.1502614, 0.1426407], atol=1e-3, rtol=0)
     gen = gnm.generate_kirchoff()
     # fmt: off
     assert_allclose(
@@ -159,9 +153,7 @@ def test_closeContactGNMAnalysis_weights_None(universe, client_GNMAnalysis):
     result = gnm.results
     assert len(result.times) == 2
     assert_allclose(gnm.results.times, (0, 100), atol=1e-3, rtol=0)
-    assert_allclose(
-        gnm.results.eigenvalues, [2.4328739, 2.2967251], atol=1e-3, rtol=0
-    )
+    assert_allclose(gnm.results.eigenvalues, [2.4328739, 2.2967251], atol=1e-3, rtol=0)
     gen = gnm.generate_kirchoff()
     # fmt: off
     assert_allclose(
@@ -191,9 +183,7 @@ def test_closeContactGNMAnalysis_weights_None(universe, client_GNMAnalysis):
 
 def test_closeContactGNMAnalysis_select_CA(universe, client_GNMAnalysis):
     # Issue #4924 fix the bug of CA selection
-    gnm = mda.analysis.gnm.closeContactGNMAnalysis(
-        universe, "name CA", weights=None
-    )
+    gnm = mda.analysis.gnm.closeContactGNMAnalysis(universe, "name CA", weights=None)
     gnm.run(stop=2, **client_GNMAnalysis)
     result = gnm.results
     assert len(result.times) == 2
